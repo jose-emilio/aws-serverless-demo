@@ -4,9 +4,16 @@ Parameters:
   email:
     Type: String
     Default: joseemilio@aws-training.org
-        
-Resources:
+  AWSAcademy:
+    Type: String
+    Description: Indica si se despliega la pila en AWS Academy Learner Labs o en una cuenta convencional de AWS
+    AllowedValues: ["SI","NO"]
+    Default: "NO"
 
+Conditions:
+  CrearRolIAM: !Equals [!Ref AWSAcademy, "NO"]
+
+Resources:
   OrigenS3:
     Type: AWS::S3::Bucket
     DependsOn:
@@ -33,14 +40,17 @@ Resources:
         - sufijo: !Select [2, !Split ["/", !Ref "AWS::StackId"]]
 
   Escalado:
-      Type: AWS::Lambda::Function 
+      Type: AWS::Lambda::Function
       Properties:
           Code: resize/resize.zip
           PackageType: Zip
           MemorySize: 256
           Handler: resize.handler
           Runtime: python3.8
-          Role: !GetAtt RolEscalado.Arn
+          Role: !If
+            - CrearRolIAM
+            - !GetAtt RolEscalado.Arn
+            - !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:role/LabRole
           Timeout: 60
           Layers:
             - !Sub arn:aws:lambda:${AWS::Region}:770693421928:layer:Klayers-p38-Pillow:10
@@ -70,6 +80,7 @@ Resources:
 
   RolEscalado:
     Type: AWS::IAM::Role
+    Condition: CrearRolIAM
     Properties:
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
@@ -210,3 +221,10 @@ Resources:
       Topics:
         - !Ref TemaSNS
 
+Outputs:
+  BucketOrigen:
+    Description: "Bucket donde cargar las imagenes en JPG"
+    Value: !Ref OrigenS3
+  BucketDestino:
+    Description: "Bucket donde se almacenan las imagenes procesadas"
+    Value: !Ref DestinoS3
