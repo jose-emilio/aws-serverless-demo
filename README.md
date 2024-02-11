@@ -61,7 +61,7 @@ Se implementa un backend de una aplicación que, tras cargar una imagen en forma
 
 5. Se despliega la infraestructura a partir de la plantilla transformada. El despliegue durará varios minutos:
 
-        EMAIL=*email-notificacion*
+        EMAIL=<email-notificacion>
 
 	Para desplegar en un <em>sandbox</em> de AWS Academy Learner Labs:
 
@@ -79,6 +79,6 @@ Se implementa un backend de una aplicación que, tras cargar una imagen en forma
         
     Para comprobar el correcto funcionamiento, se puede descargar una imagen JPG de gran tamaño y cargarla en el bucket anterior mediante la orden:
 
-        aws s3 cp *imagen-JPG* s3://$ORIGEN --region $REGION
+        aws s3 cp <imagen-JPG> s3://$ORIGEN --region $REGION
 
     A los pocos segundos, deberemos recibir dos notificaciones en el correo electrónico configurado
