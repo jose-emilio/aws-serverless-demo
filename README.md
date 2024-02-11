@@ -1,4 +1,4 @@
-# **Despliegue de una aplicación *Serverless***
+# **Despliegue de una aplicación *Serverless* en AWS**
 
 ## **Objetivo**
 
